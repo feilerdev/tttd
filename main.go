@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	// fileListPath := os.Args[1]
+
 	content, err := os.ReadFile("./tests/sample_invalid_satd_1.go")
 	if err != nil {
 		panic(err)
