@@ -11,7 +11,6 @@ type TechnicalDebt struct {
 	Description string
 	File        string
 	Line        int
-	tte         string
 }
 
 // Parse extracts SATDs from a string content parsing it using a pre-agreed token.
