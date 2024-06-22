@@ -9,7 +9,7 @@ import (
 func main() {
 	fileListPath := os.Args[1]
 
-	fmt.Printf("file list %s: ", fileListPath)
+	fmt.Printf("file list %s: \n", fileListPath)
 
 	var arr []string
 	err := json.Unmarshal([]byte(fileListPath), &arr)
