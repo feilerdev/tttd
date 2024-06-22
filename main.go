@@ -12,7 +12,7 @@ func main() {
 	fmt.Printf("file list %s: ", fileListPath)
 
 	var arr []string
-	err = json.Unmarshal([]byte(fileListPath), &arr)
+	err =: json.Unmarshal([]byte(fileListPath), &arr)
 	if err != nil {
 		panic(err)
 	}
