@@ -13,3 +13,6 @@ automatizing the extraction of SATDs from the code to the used issues manager.
 - Support export results to CSV
 - Support sending results to issues management tools
 - Use regex for detection
+
+## How to run
+$ go run .
