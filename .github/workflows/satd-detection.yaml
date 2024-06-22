@@ -1,38 +1,38 @@
-# name: SATDs Detection & Extraction
-# run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-# on: [push]
-# jobs:
-#   DetectAndExtract:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: echo "🎉 Event trigger -> ${{ github.event_name }}"
-#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+name: SATDs Detection & Extraction
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  DetectAndExtract:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 Event trigger -> ${{ github.event_name }}"
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
-#       - name: Check out repository code
-#         uses: actions/checkout@v4
+      - name: Check out repository code
+        uses: actions/checkout@v4
 
-#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-#       - run: echo "🖥️ The workflow is now ready to execute your action."
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to execute your action."
       
-#       - name: Setup Go
-#         uses: actions/setup-go@v4
+      - name: Setup Go
+        uses: actions/setup-go@v4
       
-#       - name: Get Changed Files
-#         uses: trilom/file-changes-action@v1.2.3
-#         with:
-#           fileOutput: "json"
+      - name: Get Changed Files
+        uses: trilom/file-changes-action@v1.2.3
+        with:
+          fileOutput: "json"
 
-#       - name: test
-#         run: |
-#           cat $HOME/files.json
-#           cat $HOME/files_modified.json
-#           cat $HOME/files_added.json
-#           cat $HOME/files_removed.json
+      - name: test
+        run: |
+          cat $HOME/files.json
+          cat $HOME/files_modified.json
+          cat $HOME/files_added.json
+          cat $HOME/files_removed.json
 
-#       - name: Detect and Extract SATDs
-#         run: |
-#           go run main.go -- $HOME/files.json
+      - name: Detect and Extract SATDs
+        run: |
+          go run main.go -- $HOME/files.json
 
-#       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - run: echo "🍏 This job's status is ${{ job.status }}."
 
