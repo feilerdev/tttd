@@ -4,6 +4,8 @@ on: [push]
 jobs:
   DetectAndExtract:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
     steps:
       - run: echo "🎉 Event trigger -> ${{ github.event_name }}"
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -22,21 +24,19 @@ jobs:
         id: changed-markdown-files
         uses: tj-actions/changed-files@v44
         with:
-          json: 'true'
+          json: true
+          matrix: true
           # Avoid using single or double quotes for multiline patterns
           files: |
              **.go
 
       - name: test
         run: |
-          cat $HOME/files.json
-          cat $HOME/files_modified.json
-          cat $HOME/files_added.json
-          cat $HOME/files_removed.json
+          echo ${{ steps.changed-files.outputs.all_changed_files }}
 
-      - name: Detect and Extract SATDs
-        run: |
-          go run main.go -- $HOME/files.json
+      # - name: Detect and Extract SATDs
+      #   run: |
+      #     go run main.go -- $HOME/files.json
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
