@@ -36,7 +36,7 @@ jobs:
 
       - name: Detect and Extract SATDs
         run: |
-          go run main.go -- ${{ steps.changed-files.outputs.all_changed_files }}
+          go run . ${{ steps.changed-files.outputs.all_changed_files }}
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
