@@ -30,13 +30,13 @@ jobs:
           files: |
              **.go
 
-      - name: test
+      - name: echo test
         run: |
           echo ${{ steps.changed-files.outputs.all_changed_files }}
 
-      # - name: Detect and Extract SATDs
-      #   run: |
-      #     go run main.go -- $HOME/files.json
+      - name: Detect and Extract SATDs
+        run: |
+          go run main.go -- ${{ steps.changed-files.outputs.all_changed_files }}
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
