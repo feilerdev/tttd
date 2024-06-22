@@ -18,10 +18,14 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
       
-      - name: Get Changed Files
-        uses: trilom/file-changes-action@v1.2.3
+      - name: Get all changed markdown files
+        id: changed-markdown-files
+        uses: tj-actions/changed-files@v44
         with:
-          fileOutput: "json"
+          json: 'true'
+          # Avoid using single or double quotes for multiline patterns
+          files: |
+             **.go
 
       - name: test
         run: |
