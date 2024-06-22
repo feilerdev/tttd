@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -8,9 +9,18 @@ import (
 func main() {
 	fileListPath := os.Args[1]
 
-	fmt.Printf("file list %s", fileListPath)
+	fmt.Printf("file list %s: ", fileListPath)
 
-	content, err := os.ReadFile("./tests/sample_invalid_satd_1.go")
+	var arr []string
+	err = json.Unmarshal([]byte(fileListPath), &arr)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("json %v: ", arr)
+
+	// content, err := os.ReadFile("./tests/sample_invalid_satd_1.go")
+	content, err := os.ReadFile(arr[0])
 	if err != nil {
 		panic(err)
 	}
