@@ -22,6 +22,8 @@ func main() {
 	// Get the output path from the environment variable
 	outputPath := os.Getenv("OUTPUT_PATH")
 
+	logger.Info(outputPath)
+
 	satds := make([]*TechnicalDebt, 0)
 
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
@@ -64,6 +66,7 @@ func main() {
 }
 
 func export(l *slog.Logger, satds []*TechnicalDebt, path string) error {
+	logger.Info(path + "/satds.csv")
 	csvFile, err := os.Create(path + "/satds.csv")
 	if err != nil {
 		l.Error("failed creating file: %s", err)
