@@ -12,8 +12,6 @@ import (
 func main() {
 	NewLogger()
 
-	// fileListPath := os.Args[1]
-
 	// The workspace directory is automatically set as the working directory
 	workspaceDir, _ := os.Getwd()
 
@@ -21,6 +19,11 @@ func main() {
 
 	// Get the output path from the environment variable
 	outputPath := os.Getenv("OUTPUT_PATH")
+	if outputPath == "" {
+		outputPath = "satds.csv"
+	}
+
+	outputPath = filepath.Join(workspaceDir, outputPath)
 
 	logger.Info(outputPath)
 
@@ -37,13 +40,15 @@ func main() {
 
 		content, err := os.ReadFile(path)
 		if err != nil {
-			logger.Error("reading file: %w", err)
+			logger.Error("reading file", slog.Any("error", err))
+
 			panic(err)
 		}
 
 		fileSatds, err := Parse(string(content))
 		if err != nil {
-			logger.Error("parsing: %w", err)
+			logger.Error("parsing", slog.Any("error", err))
+
 			panic(err)
 		}
 
@@ -52,7 +57,8 @@ func main() {
 		return nil
 	})
 	if err != nil {
-		logger.Error("reading files: %", err)
+		logger.Error("reading files", slog.Any("error", err))
+
 		panic(err)
 	}
 
@@ -62,14 +68,22 @@ func main() {
 
 	debug(logger, satds)
 
-	export(logger, satds, outputPath)
+	writeToCSV(logger, satds, outputPath)
 }
 
-func export(l *slog.Logger, satds []*TechnicalDebt, path string) error {
-	logger.Info(path + "/satds.csv")
-	csvFile, err := os.Create(path + "/satds.csv")
+func writeToCSV(l *slog.Logger, satds []*TechnicalDebt, path string) error {
+	l.Info(fmt.Sprintf("Writing CSV to %s", path))
+
+	// Ensure the directory exists
+	err := os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
-		l.Error("failed creating file: %s", err)
+		l.Error("failed creating directory", slog.Any("error", err))
+		return err
+	}
+
+	csvFile, err := os.Create(path)
+	if err != nil {
+		l.Error("failed creating file", slog.Any("error", err))
 
 		return err
 	}
@@ -91,18 +105,20 @@ func export(l *slog.Logger, satds []*TechnicalDebt, path string) error {
 	w.WriteAll(records) // calls Flush internally
 
 	if err := w.Error(); err != nil {
-		l.Error("error writing csv:", err)
+		l.Error("error writing csv", slog.Any("error", err))
 
 		return err
 	}
+
+	l.Info("CSV file written successfully", slog.String("path", path))
 
 	return nil
 }
 
 func debug(l *slog.Logger, satds []*TechnicalDebt) {
 	for _, satd := range satds {
-		l.Info(satd.Type)
-		l.Info(satd.Description)
-		l.Info("line", slog.Int("line", satd.Line))
+		l.Info(fmt.Sprintf("SATD Description: %s", satd.Description))
+		l.Info(fmt.Sprintf("SATD Type: %s", satd.Type))
+		l.Info("SATD Line:", slog.Int("line", satd.Line))
 	}
 }
