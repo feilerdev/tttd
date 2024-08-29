@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -29,6 +30,10 @@ func main() {
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
+		}
+
+		if info.IsDir() || !strings.HasSuffix(info.Name(), ".go") {
+			return nil
 		}
 
 		content, err := os.ReadFile(path)
