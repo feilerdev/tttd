@@ -21,9 +21,6 @@ func main() {
 
 	// Get the output path from the environment variable
 	outputPath := os.Getenv("OUTPUT_PATH")
-	if outputPath == "" {
-		outputPath = "report.txt"
-	}
 
 	satds := make([]*TechnicalDebt, 0)
 
