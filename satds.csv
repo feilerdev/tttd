@@ -1,0 +1,3 @@
+summary,description,reporter,issue type,title
+"add 'token' param, so the consumer can customize the content.","add 'token' param, so the consumer can customize the content. type: td-design line: 18"
+improve package division.,improve package division. type: td-design line: 8
