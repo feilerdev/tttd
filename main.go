@@ -23,6 +23,8 @@ func main() {
 		outputPath = "satds.csv"
 	}
 
+	// TODO: Get CSV header from environment variable
+
 	// If the outputPath is not absolute, make it relative to the workspace
 	if !filepath.IsAbs(outputPath) {
 		outputPath = filepath.Join(workspaceDir, outputPath)
@@ -94,12 +96,13 @@ func writeToCSV(l *slog.Logger, satds []*TechnicalDebt, path string) error {
 
 	w := csv.NewWriter(csvFile)
 
+	// It's based on Jira default fields
 	records := [][]string{
 		{"summary", "description", "reporter", "issue type"},
 	}
 
 	for _, satd := range satds {
-		desc := fmt.Sprintf("%s, line: %d", satd.Description, satd.Line)
+		desc := fmt.Sprintf("%s | file:%s, line: %d", satd.Description, satd.File, satd.Line)
 		row := []string{satd.Description, desc, "tttd", satd.Type}
 
 		records = append(records, row)
