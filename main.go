@@ -18,14 +18,17 @@ func main() {
 	logger.Info(workspaceDir)
 
 	// Get the output path from the environment variable
-	outputPath := os.Getenv("OUTPUT_PATH")
+	outputPath := os.Getenv("INPUT_OUTPUT_PATH")
 	if outputPath == "" {
 		outputPath = "satds.csv"
 	}
 
-	outputPath = filepath.Join(workspaceDir, outputPath)
+	// If the outputPath is not absolute, make it relative to the workspace
+	if !filepath.IsAbs(outputPath) {
+		outputPath = filepath.Join(workspaceDir, outputPath)
+	}
 
-	logger.Info(outputPath)
+	logger.Info("Output path", slog.String("path", outputPath))
 
 	satds := make([]*TechnicalDebt, 0)
 

@@ -4,21 +4,20 @@ description: 'SATDs detection'
 author: feilerdev
 
 inputs:
-  output_path:
+  input_output_path:
     description: 'Path where the report will be generated'
     required: false
     default: './report'
 
 outputs:
   exported_csv:
-    description: "Returns default CSV wit detected SATDs."
+    description: "Returns default CSV with detected SATDs."
 
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.output_format }}
-    - ${{ inputs.output_path }}
+  env:
+    INPUT_OUTPUT_PATH: ${{ inputs.output_path }}
 
 branding:
   icon: file-text
