@@ -11,10 +11,11 @@ type TechnicalDebt struct {
 	Description string
 	File        string
 	Line        int
+	sad         string
 }
 
 // Parse extracts SATDs from a string content parsing it using a pre-agreed token.
-// TODO: td-design > add 'token' param, so it the consumer can customize the content.
+// TODO: td-design > add 'token' param, so the consumer can customize the content.
 func Parse(content string) ([]*TechnicalDebt, error) {
 	const (
 		satdToken = "TODO"
@@ -34,10 +35,18 @@ func Parse(content string) ([]*TechnicalDebt, error) {
 		line := scanner.Text()
 
 		if strings.Contains(line, satdToken) {
-			satd := strings.Split(line, satdSep)[satdPos]
+			tokens := strings.Split(line, satdSep)
+
+			if len(tokens) <= satdPos {
+				continue
+			}
+
+			satd := tokens[satdPos]
 
 			td, err := extract(satd)
 			if err != nil {
+				logger.Error("parsing", err)
+
 				return nil, fmt.Errorf("extracting content: %w", err)
 			}
 

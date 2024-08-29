@@ -15,4 +15,4 @@ automatizing the extraction of SATDs from the code to the used issues manager.
 - Use regex for detection
 
 ## How to run
-$ go run .
+$ go run . '["test.go"]'
