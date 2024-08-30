@@ -15,7 +15,6 @@ type TechnicalDebt struct {
 }
 
 // Parse extracts SATDs from a string content parsing it using a pre-agreed token.
-// TODO: td-design > add 'token' param, so the consumer can customize the content.
 func Parse(content string) ([]*TechnicalDebt, error) {
 	const (
 		satdToken = "TODO"
