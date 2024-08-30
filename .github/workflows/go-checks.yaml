@@ -31,4 +31,4 @@ jobs:
           check-latest: true
 
       - name: Make build
-        run: make build-all
+        run: make build
