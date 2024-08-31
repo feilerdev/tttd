@@ -6,21 +6,33 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
+
+const satdPattern = `((\/\/)|(\*))\s?TODO(\([0-9A-Za-z].*\))?:?\s?[0-9A-Za-z_\s]*\s?(->)?\s?[0-9A-Za-z]*\-?[0-9A-Za-z]*\s?(=>)?\s?\$?\$?\$?\$?\$?(\w|$)`
+
+var regex = regexp.MustCompile(satdPattern)
 
 func main() {
 	NewLogger()
 
+	const defaultFileName = "satds.csv"
+
 	// The workspace directory is automatically set as the working directory
-	workspaceDir, _ := os.Getwd()
+	workspaceDir, err := os.Getwd()
+	if err != nil {
+		logger.Error("getting root directory", slog.Any("error", err))
+
+		panic(err)
+	}
 
 	logger.Info(workspaceDir)
 
 	// Get the output path from the environment variable
 	outputPath := os.Getenv("INPUT_OUTPUT_PATH")
 	if outputPath == "" {
-		outputPath = "satds.csv"
+		outputPath = defaultFileName
 	}
 
 	// TODO: Get CSV header from environment variable
@@ -32,34 +44,10 @@ func main() {
 
 	logger.Info("Output path", slog.String("path", outputPath))
 
-	satds := make([]*TechnicalDebt, 0)
+	satds := make([]TechnicalDebt, 0)
 
-	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.IsDir() || !strings.HasSuffix(info.Name(), ".go") {
-			return nil
-		}
-
-		content, err := os.ReadFile(path)
-		if err != nil {
-			logger.Error("reading file", slog.Any("error", err))
-
-			panic(err)
-		}
-
-		fileSatds, err := Parse(string(content))
-		if err != nil {
-			logger.Error("parsing", slog.Any("error", err))
-
-			panic(err)
-		}
-
-		satds = append(satds, fileSatds...)
-
-		return nil
+	err = filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
+		return process(path, info, err)
 	})
 	if err != nil {
 		logger.Error("reading files", slog.Any("error", err))
@@ -76,7 +64,43 @@ func main() {
 	writeToCSV(logger, satds, outputPath)
 }
 
-func writeToCSV(l *slog.Logger, satds []*TechnicalDebt, path string) error {
+func process(path string, info os.FileInfo, err error, satds []TechnicalDebt) error {
+	if err != nil {
+		return err
+	}
+
+	if info.IsDir() || !strings.HasSuffix(info.Name(), ".go") {
+		return nil
+	}
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		logger.Error("reading file", slog.Any("error", err))
+
+		panic(err)
+	}
+
+	strContent := string(content)
+
+	match := regex.MatchString(strContent)
+	if !match {
+		return nil
+	}
+
+	fileSatds, err := Parse()
+	if err != nil {
+		logger.Error("parsing", slog.Any("error", err))
+
+		panic(err)
+	}
+
+	satds = append(satds, fileSatds...)
+
+	return nil
+
+}
+
+func writeToCSV(l *slog.Logger, satds []TechnicalDebt, path string) error {
 	l.Info(fmt.Sprintf("Writing CSV to %s", path))
 
 	// Ensure the directory exists
@@ -121,7 +145,7 @@ func writeToCSV(l *slog.Logger, satds []*TechnicalDebt, path string) error {
 	return nil
 }
 
-func debug(l *slog.Logger, satds []*TechnicalDebt) {
+func debug(l *slog.Logger, satds []TechnicalDebt) {
 	for _, satd := range satds {
 		l.Info(fmt.Sprintf("SATD Description: %s", satd.Description))
 		l.Info(fmt.Sprintf("SATD Type: %s", satd.Type))

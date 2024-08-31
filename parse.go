@@ -15,7 +15,7 @@ type TechnicalDebt struct {
 }
 
 // Parse extracts SATDs from a string content parsing it using a pre-agreed token.
-func Parse(content string) ([]*TechnicalDebt, error) {
+func Parse(content string) ([]TechnicalDebt, error) {
 	const (
 		satdToken = "TODO"
 		satdSep   = ":"
@@ -24,7 +24,7 @@ func Parse(content string) ([]*TechnicalDebt, error) {
 
 	scanner := bufio.NewScanner(strings.NewReader(content))
 
-	debts := make([]*TechnicalDebt, 0)
+	debts := make([]TechnicalDebt, 0)
 
 	var i int
 
@@ -49,7 +49,7 @@ func Parse(content string) ([]*TechnicalDebt, error) {
 				return nil, fmt.Errorf("extracting content: %w", err)
 			}
 
-			if td == nil {
+			if td.File == "" {
 				continue
 			}
 
@@ -62,7 +62,7 @@ func Parse(content string) ([]*TechnicalDebt, error) {
 	return debts, nil
 }
 
-func extract(satd string) (*TechnicalDebt, error) {
+func extract(satd string) (TechnicalDebt, error) {
 	const (
 		tdSep   = ">"
 		typePos = 0
@@ -72,10 +72,10 @@ func extract(satd string) (*TechnicalDebt, error) {
 	tokens := strings.Split(satd, tdSep)
 
 	if len(tokens) == 1 {
-		return nil, nil
+		return TechnicalDebt{}, nil
 	}
 
-	return &TechnicalDebt{
+	return TechnicalDebt{
 		Type:        strings.TrimSpace(tokens[typePos]),
 		Description: strings.TrimSpace(tokens[descPos]),
 	}, nil
