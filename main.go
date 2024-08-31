@@ -42,12 +42,12 @@ func main() {
 		outputPath = filepath.Join(workspaceDir, outputPath)
 	}
 
-	logger.Info("Output path", slog.String("path", outputPath))
+	logger.Info("output path", slog.String("path", outputPath))
 
 	satds := make([]TechnicalDebt, 0)
 
 	err = filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
-		return process(path, info, err)
+		return detectAndParse(path, info, err, satds)
 	})
 	if err != nil {
 		logger.Error("reading files", slog.Any("error", err))
@@ -56,7 +56,7 @@ func main() {
 	}
 
 	if len(satds) == 0 {
-		logger.Info("No valid SATDs in file")
+		logger.Info("no valid SATDs in file")
 	}
 
 	debug(logger, satds)
@@ -64,7 +64,7 @@ func main() {
 	writeToCSV(logger, satds, outputPath)
 }
 
-func process(path string, info os.FileInfo, err error, satds []TechnicalDebt) error {
+func detectAndParse(path string, info os.FileInfo, err error, satds []TechnicalDebt) error {
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func process(path string, info os.FileInfo, err error, satds []TechnicalDebt) er
 		return nil
 	}
 
-	fileSatds, err := Parse()
+	fileSatds, err := ParseRegex(strContent, info.Name())
 	if err != nil {
 		logger.Error("parsing", slog.Any("error", err))
 

@@ -3,16 +3,32 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
 type TechnicalDebt struct {
-	Type        string
+	Author      string
 	Description string
+	Type        string
 	File        string
 	Line        int
 	sad         string
 }
+
+const (
+	patternAuthor      = `TODO(\([0-9A-Za-z].*\))`
+	patternDescription = `((TODO)|(:)|(\))\s?)[0-9A-Za-z_\s]*\s?`
+	patternType        = `(->)\s?[0-9A-Za-z_\s-]*\s`
+	patternCost        = `(=>)\s?[$]*`
+)
+
+var (
+	regexAuthor      = regexp.MustCompile(patternAuthor)
+	regexDescription = regexp.MustCompile(patternDescription)
+	regexType        = regexp.MustCompile(patternType)
+	regexCost        = regexp.MustCompile(patternCost)
+)
 
 // Parse extracts SATDs from a string content parsing it using a pre-agreed token.
 func Parse(content string) ([]TechnicalDebt, error) {
@@ -57,6 +73,41 @@ func Parse(content string) ([]TechnicalDebt, error) {
 
 			debts = append(debts, td)
 		}
+	}
+
+	return debts, nil
+}
+
+func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
+
+	scanner := bufio.NewScanner(strings.NewReader(content))
+
+	debts := make([]TechnicalDebt, 0)
+
+	var n int
+
+	for scanner.Scan() {
+		n++
+
+		line := scanner.Text()
+
+		if !regex.MatchString(line) {
+			continue
+		}
+
+		author := regexAuthor.FindString(line)
+		desc := regexAuthor.FindString(line)
+		tdType := regexAuthor.FindString(line)
+
+		td := TechnicalDebt{
+			Author:      author,
+			Description: desc,
+			Type:        tdType,
+			File:        file,
+			Line:        n,
+		}
+
+		debts = append(debts, td)
 	}
 
 	return debts, nil
