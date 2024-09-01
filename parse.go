@@ -11,16 +11,17 @@ type TechnicalDebt struct {
 	Author      string
 	Description string
 	Type        string
+	Cost        string
 	File        string
 	Line        int
 	sad         string
 }
 
 const (
-	patternAuthor      = `TODO(\([0-9A-Za-z].*\))`
-	patternDescription = `((TODO)|(:)|(\))\s?)[0-9A-Za-z_\s]*\s?`
-	patternType        = `(->)\s?[0-9A-Za-z_\s-]*\s`
-	patternCost        = `(=>)\s?[$]*`
+	patternAuthor      = `TODO\(([0-9A-Za-z\.]*)\)`
+	patternDescription = `(TODO|:|\))\s?([0-9A-Za-z_\s]*)\s?`
+	patternType        = `->\s?([0-9A-Za-z_\s-]*)`
+	patternCost        = `=>\s?([$]*)`
 )
 
 var (
@@ -95,14 +96,27 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			continue
 		}
 
-		author := regexAuthor.FindString(line)
-		desc := regexAuthor.FindString(line)
-		tdType := regexAuthor.FindString(line)
+		author := regexAuthor.FindAllStringSubmatch(line, -1)
+		subAuthor := author[0]
+		strAuthor := strings.TrimSpace(subAuthor[1])
+
+		desc := regexDescription.FindAllStringSubmatch(line, -1)
+		subDesc := desc[2]
+		strDesc := strings.TrimSpace(subDesc[2])
+
+		tdType := regexType.FindAllStringSubmatch(line, -1)
+		subType := tdType[0]
+		strType := strings.TrimSpace(subType[1])
+
+		cost := regexCost.FindAllStringSubmatch(line, -1)
+		subCost := cost[0]
+		strCost := strings.TrimSpace(subCost[1])
 
 		td := TechnicalDebt{
-			Author:      author,
-			Description: desc,
-			Type:        tdType,
+			Author:      strAuthor,
+			Description: strDesc,
+			Type:        strType,
+			Cost:        strCost,
 			File:        file,
 			Line:        n,
 		}
