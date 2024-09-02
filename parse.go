@@ -7,16 +7,6 @@ import (
 	"strings"
 )
 
-type TechnicalDebt struct {
-	Author      string
-	Description string
-	Type        string
-	Cost        string
-	File        string
-	Line        int
-	sad         string
-}
-
 const (
 	patternAuthor      = `TODO\(([0-9A-Za-z\.]*)\)`
 	patternDescription = `(TODO|:|\))\s?([0-9A-Za-z_\s]*)\s?`
