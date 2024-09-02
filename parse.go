@@ -80,7 +80,6 @@ func Parse(content string) ([]TechnicalDebt, error) {
 }
 
 func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
-
 	scanner := bufio.NewScanner(strings.NewReader(content))
 
 	debts := make([]TechnicalDebt, 0)

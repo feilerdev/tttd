@@ -14,9 +14,18 @@ const satdPattern = `((\/\/)|(\*))\s?TODO(\([0-9A-Za-z].*\))?:?\s?[0-9A-Za-z_\s]
 
 var regex = regexp.MustCompile(satdPattern)
 
+type config struct {
+	workspaceDir string
+	outputPath   string
+}
+
 func main() {
 	NewLogger()
 
+	execute()
+}
+
+func execute() {
 	const defaultFileName = "satds.csv"
 
 	// The workspace directory is automatically set as the working directory
