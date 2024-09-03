@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -19,8 +20,22 @@ var (
 func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	satds := make([]TechnicalDebt, 0)
 
+	// TODO: detect which files have satds using .Walk (sync)
+	// put the content in a map and parse using go routines (concurrently)?
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
-		return detectAndParse(path, info, err, satds)
+		// logger.Info(fmt.Sprintf("%d", len(satds)))
+		if info.IsDir() {
+			return nil
+		}
+
+		newSatds, errDetectAndParse := detectAndParse(path, info, err)
+		if errDetectAndParse != nil {
+			return fmt.Errorf("detecting and parsing: %w", errDetectAndParse)
+		}
+
+		satds = append(satds, newSatds...)
+
+		return nil
 	})
 	if err != nil {
 		logger.Error("reading files", slog.Any("error", err))
@@ -37,37 +52,37 @@ func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	return satds, nil
 }
 
-func detectAndParse(path string, info os.FileInfo, err error, satds []TechnicalDebt) error {
+func detectAndParse(path string, info os.FileInfo, err error) ([]TechnicalDebt, error) {
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	satds := make([]TechnicalDebt, 0)
+
 	if info.IsDir() || !strings.HasSuffix(info.Name(), ".go") {
-		return nil
+		return satds, nil
 	}
 
 	content, err := os.ReadFile(path)
 	if err != nil {
 		logger.Error("reading file", slog.Any("error", err))
 
-		panic(err)
+		return nil, err
 	}
 
 	strContent := string(content)
 
 	match := regex.MatchString(strContent)
 	if !match {
-		return nil
+		return satds, nil
 	}
 
-	fileSatds, err := ParseRegex(strContent, info.Name())
+	satds, err = ParseRegex(strContent, info.Name())
 	if err != nil {
 		logger.Error("parsing", slog.Any("error", err))
 
-		panic(err)
+		return nil, err
 	}
 
-	satds = append(satds, fileSatds...)
-
-	return nil
+	return satds, nil
 }

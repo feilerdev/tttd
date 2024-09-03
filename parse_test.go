@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -55,16 +54,13 @@ func Test_ParseRegex(t *testing.T) {
 				t.Errorf("error %v", err)
 			}
 
+			if len(got) == 0 {
+				t.Fail()
+			}
+
 			// <VALIDATE>: verify results
 			for _, g := range got {
 				for _, w := range tt.want {
-					fmt.Println(g.Author)
-					fmt.Println(g.Description)
-					fmt.Println(g.Type)
-					fmt.Println(g.Cost)
-					fmt.Println(g.File)
-					fmt.Println(g.Line)
-
 					if g.Author != w.Author {
 						t.Errorf("author: got %q, wanted %q", g.Author, w.Author)
 					}

@@ -85,21 +85,42 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			continue
 		}
 
+		fmt.Println(line)
+
+		var strAuthor string
+
 		author := regexAuthor.FindAllStringSubmatch(line, -1)
-		subAuthor := author[0]
-		strAuthor := strings.TrimSpace(subAuthor[1])
+		if len(author) > 0 {
+			subAuthor := author[0]
+			strAuthor = strings.TrimSpace(subAuthor[1])
+		}
 
+		var strDesc string
 		desc := regexDescription.FindAllStringSubmatch(line, -1)
-		subDesc := desc[2]
-		strDesc := strings.TrimSpace(subDesc[2])
+		if len(desc) > 0 {
+			var subDesc []string
+			if len(desc) > 2 {
+				subDesc = desc[2]
+			}
 
+			if len(subDesc) > 2 {
+				strDesc = strings.TrimSpace(subDesc[2])
+			}
+		}
+
+		var strType string
 		tdType := regexType.FindAllStringSubmatch(line, -1)
-		subType := tdType[0]
-		strType := strings.TrimSpace(subType[1])
+		if len(tdType) > 0 {
+			subType := tdType[0]
+			strType = strings.TrimSpace(subType[1])
+		}
 
+		var strCost string
 		cost := regexCost.FindAllStringSubmatch(line, -1)
-		subCost := cost[0]
-		strCost := strings.TrimSpace(subCost[1])
+		if len(cost) > 0 {
+			subCost := cost[0]
+			strCost = strings.TrimSpace(subCost[1])
+		}
 
 		td := TechnicalDebt{
 			Author:      strAuthor,
@@ -111,6 +132,7 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 		}
 
 		debts = append(debts, td)
+		fmt.Println(len(debts))
 	}
 
 	return debts, nil
