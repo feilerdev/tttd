@@ -9,12 +9,13 @@ import (
 
 const (
 	patternAuthor      = `TODO\(([0-9A-Za-z\.]*)\)`
-	patternDescription = `(TODO|:|\))\s?([0-9A-Za-z_\s]*)\s?`
+	patternDescription = `(TODO|\)|:)(\s)?([0-9A-Za-z_\-\s]*)(\s)?`
 	patternType        = `->\s?([0-9A-Za-z_\s-]*)`
 	patternCost        = `=>\s?([$]*)`
 )
 
 var (
+	// TODO(alexandre.liberato): add date
 	regexAuthor      = regexp.MustCompile(patternAuthor)
 	regexDescription = regexp.MustCompile(patternDescription)
 	regexType        = regexp.MustCompile(patternType)
@@ -85,20 +86,31 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			continue
 		}
 
-		fmt.Println(line)
+		fmt.Printf("\n\n---->> %s\n", line)
 
 		var strAuthor string
 
 		author := regexAuthor.FindAllStringSubmatch(line, -1)
+		// author exists
 		if len(author) > 0 {
 			subAuthor := author[0]
+
 			strAuthor = strings.TrimSpace(subAuthor[1])
 		}
 
 		var strDesc string
-		desc := regexDescription.FindAllStringSubmatch(line, -1)
+
+		fmt.Printf("---->> description\n")
+		desc := regexDescription.FindAllStringSubmatch(line, 3)
+		// description exists
 		if len(desc) > 0 {
 			var subDesc []string
+
+			fmt.Printf("---->> description[0]: %s\n", desc[0])
+			if len(desc) > 1 {
+				fmt.Printf("---->> description[1]: %s\n", desc[1])
+			}
+
 			if len(desc) > 2 {
 				subDesc = desc[2]
 			}
@@ -132,7 +144,6 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 		}
 
 		debts = append(debts, td)
-		fmt.Println(len(debts))
 	}
 
 	return debts, nil

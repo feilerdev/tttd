@@ -7,5 +7,5 @@ build:
 .PHONY: test
 test:
 	@echo "==> testing system..."
-	@go test ./...
+	@go test ./... -v
 	@echo "==> done!"
