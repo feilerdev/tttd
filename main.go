@@ -44,6 +44,9 @@ func execute() {
 	}
 
 	satds, err := extractSATDs(workspaceDir)
+	if err != nil {
+		panic(err)
+	}
 
 	writeToCSV(logger, satds, outputPath)
 }
