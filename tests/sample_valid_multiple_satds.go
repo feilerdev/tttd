@@ -5,9 +5,14 @@ import "fmt"
 func validsSatd() {
 	fmt.Println("Hello world!")
 
-	// TODO: td-design > improve package division.
+	// TODO: simple
+	// TODO(simple): with description
+	// TODO(simple): with description > and type
+	// TODO(simple): with description > and type => and cost
+
+	// TODO: description without user > improve package division.
 	fmt.Println("Hello tttd!")
 
-	// TODO: td-maintenence > improve package division.
+	// TODO(al.lo): td-maintenence > improve package division.
 	fmt.Println("Hello tttd!")
 }
