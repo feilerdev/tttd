@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -21,54 +20,6 @@ var (
 	regexType        = regexp.MustCompile(patternType)
 	regexCost        = regexp.MustCompile(patternCost)
 )
-
-// Parse extracts SATDs from a string content parsing it using a pre-agreed token.
-func Parse(content string) ([]TechnicalDebt, error) {
-	const (
-		satdToken = "TODO"
-		satdSep   = ":"
-		satdPos   = 1
-	)
-
-	scanner := bufio.NewScanner(strings.NewReader(content))
-
-	debts := make([]TechnicalDebt, 0)
-
-	var i int
-
-	for scanner.Scan() {
-		i++
-
-		line := scanner.Text()
-
-		if strings.Contains(line, satdToken) {
-			tokens := strings.Split(line, satdSep)
-
-			if len(tokens) <= satdPos {
-				continue
-			}
-
-			satd := tokens[satdPos]
-
-			td, err := extract(satd)
-			if err != nil {
-				logger.Error("parsing", err)
-
-				return nil, fmt.Errorf("extracting content: %w", err)
-			}
-
-			if td.File == "" {
-				continue
-			}
-
-			td.Line = i
-
-			debts = append(debts, td)
-		}
-	}
-
-	return debts, nil
-}
 
 func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 	scanner := bufio.NewScanner(strings.NewReader(content))

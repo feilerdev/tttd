@@ -23,7 +23,6 @@ func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	// TODO: detect which files have satds using .Walk (sync)
 	// put the content in a map and parse using go routines (concurrently)?
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
-		// logger.Info(fmt.Sprintf("%d", len(satds)))
 		if info.IsDir() {
 			return nil
 		}
