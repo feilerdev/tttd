@@ -17,7 +17,7 @@ func Test_ParseRegex(t *testing.T) {
 
 	testCases := []TestCase{
 		{
-			name: "success when content is valid",
+			name: "success when content is valid: complete",
 			fileContent: `package main
 
 			import "fmt"
@@ -40,13 +40,100 @@ func Test_ParseRegex(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "success when content is valid: type",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO(dev.lorem): improve package division -> td-design
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "dev.lorem",
+					Type:        "td-design",
+					Description: "improve package division",
+					Cost:        "",
+					File:        "",
+					Line:        8,
+				},
+			},
+			err: nil,
+		},
+		{
+			name: "success when content is valid: description",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO(dev.lorem): improve package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "dev.lorem",
+					Type:        "",
+					Description: "improve package division",
+					Cost:        "",
+					File:        "",
+					Line:        8,
+				},
+			},
+			err: nil,
+		},
+		{
+			name: "success when content is valid: missing author",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO: improve package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "",
+					Type:        "",
+					Description: "improve package division",
+					Cost:        "",
+					File:        "",
+					Line:        8,
+				},
+			},
+			err: nil,
+		},
+		{
+			name: "zero values when SATD is missing",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO: improve package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{},
+			err:  nil,
+		},
 	}
 
 	for _, tt := range testCases {
 		tt := tt
 
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+			// t.Parallel()
 
 			// <RUN>: output
 			got, err := ParseRegex(tt.fileContent, tt.fileName)
