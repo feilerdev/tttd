@@ -1,4 +1,4 @@
-# Todo to Tech Debt (ttd)
+# Todo to Tech Debt (tttd)
 
 The aim of this tool is to help SWE Teams in the task of better controlling it's technical debts (td) by
 automatizing the extraction of SATDs from the code to the used issues manager.
