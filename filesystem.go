@@ -56,7 +56,7 @@ func writeToCSV(l *slog.Logger, satds []TechnicalDebt, path string) error {
 func GetFileContent(path string) (string, error) {
 	content, err := os.ReadFile(path)
 	if err != nil {
-		logger.Error("reading file", err)
+		logger.Error("reading file", slog.Any("err", err))
 
 		return "", fmt.Errorf("reading file: %w", err)
 	}

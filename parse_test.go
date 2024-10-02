@@ -25,14 +25,14 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO(dev.lorem): improve package division -> td-design => $$
+				// TODO(dev.lorem): T1 improve package division -> td-design => $$
 				fmt.Println("Hello tttd!")
 			}`,
 			want: []TechnicalDebt{
 				{
 					Author:      "dev.lorem",
 					Type:        "td-design",
-					Description: "improve package division",
+					Description: "T1 improve package division",
 					Cost:        "$$",
 					File:        "",
 					Line:        8,
@@ -49,20 +49,51 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO(dev.lorem): improve package division -> td-design
+				// TODO(dev.lorem): T2 improve package division -> td-design
 				fmt.Println("Hello tttd!")
 			}`,
 			want: []TechnicalDebt{
 				{
 					Author:      "dev.lorem",
 					Type:        "td-design",
-					Description: "improve package division",
+					Description: "T2 improve package division",
 					Cost:        "",
 					File:        "",
 					Line:        8,
 				},
 			},
 			err: nil,
+		},
+
+		{
+			name: "success when no content in a comment",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// T3 testing a comment
+				fmt.Println("Hello tttd!")
+			}`,
+			want: nil,
+			err:  nil,
+		},
+		{
+			name: "success when comment is empty",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: nil,
+			err:  nil,
 		},
 		{
 			name: "success when content is valid: description",
@@ -73,14 +104,14 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO(dev.lorem): improve package division 
+				// TODO(dev.lorem): T4 improve package division 
 				fmt.Println("Hello tttd!")
 			}`,
 			want: []TechnicalDebt{
 				{
 					Author:      "dev.lorem",
 					Type:        "",
-					Description: "improve package division",
+					Description: "T4 improve package division",
 					Cost:        "",
 					File:        "",
 					Line:        8,
@@ -97,14 +128,14 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO: improve package division 
+				// TODO: T5 improve package division 
 				fmt.Println("Hello tttd!")
 			}`,
 			want: []TechnicalDebt{
 				{
 					Author:      "",
 					Type:        "",
-					Description: "improve package division",
+					Description: "T5 improve package division",
 					Cost:        "",
 					File:        "",
 					Line:        8,
@@ -121,10 +152,10 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO: improve package division 
+				// TODO: T6 improve package division 
 				fmt.Println("Hello tttd!")
 			}`,
-			want: []TechnicalDebt{},
+			want: nil,
 			err:  nil,
 		},
 	}
@@ -141,35 +172,33 @@ func Test_ParseRegex(t *testing.T) {
 				t.Errorf("error %v", err)
 			}
 
-			if len(got) == 0 {
-				t.Fail()
-			}
+			if len(got) != 0 {
+				// <VALIDATE>: verify results
+				for _, g := range got {
+					for _, w := range tt.want {
+						if g.Author != w.Author {
+							t.Errorf("author: got %q, wanted %q", g.Author, w.Author)
+						}
 
-			// <VALIDATE>: verify results
-			for _, g := range got {
-				for _, w := range tt.want {
-					if g.Author != w.Author {
-						t.Errorf("author: got %q, wanted %q", g.Author, w.Author)
-					}
+						if g.Type != w.Type {
+							t.Errorf("type: got %q, wanted %q", g.Type, w.Type)
+						}
 
-					if g.Type != w.Type {
-						t.Errorf("type: got %q, wanted %q", g.Type, w.Type)
-					}
+						if g.Description != w.Description {
+							t.Errorf("description: got %q, wanted %q", g.Description, w.Description)
+						}
 
-					if g.Description != w.Description {
-						t.Errorf("description: got %q, wanted %q", g.Description, w.Description)
-					}
+						if g.Cost != w.Cost {
+							t.Errorf("cost: got %q, wanted %q", g.Cost, w.Cost)
+						}
 
-					if g.Cost != w.Cost {
-						t.Errorf("cost: got %q, wanted %q", g.Cost, w.Cost)
-					}
+						if g.File != w.File {
+							t.Errorf("file: got %q, wanted %q", g.File, w.File)
+						}
 
-					if g.File != w.File {
-						t.Errorf("file: got %q, wanted %q", g.File, w.File)
-					}
-
-					if g.Line != w.Line {
-						t.Errorf("line: got %q, wanted %q", g.Line, w.Line)
+						if g.Line != w.Line {
+							t.Errorf("line: got %q, wanted %q", g.Line, w.Line)
+						}
 					}
 				}
 			}

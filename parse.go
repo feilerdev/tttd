@@ -59,7 +59,7 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 
 			// fmt.Printf("---->> description[0]: %s\n", desc[0])
 			// if len(desc) > 1 {
-			// fmt.Printf("---->> description[1]: %s\n", desc[1])
+			// 	fmt.Printf("---->> description[1]: %s\n", desc[1])
 			// }
 
 			if len(desc) > 2 {
@@ -109,23 +109,4 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 	}
 
 	return debts, nil
-}
-
-func extract(satd string) (TechnicalDebt, error) {
-	const (
-		tdSep   = ">"
-		typePos = 0
-		descPos = 1
-	)
-
-	tokens := strings.Split(satd, tdSep)
-
-	if len(tokens) == 1 {
-		return TechnicalDebt{}, nil
-	}
-
-	return TechnicalDebt{
-		Type:        strings.TrimSpace(tokens[typePos]),
-		Description: strings.TrimSpace(tokens[descPos]),
-	}, nil
 }
