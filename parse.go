@@ -66,7 +66,11 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 				subDesc = desc[2]
 				// fmt.Printf("---->> description[2]: %s\n", desc[2])
 			} else {
-				subDesc = desc[1]
+				subDesc = desc[0]
+
+				if len(desc) == 2 {
+					subDesc = desc[1]
+				}
 			}
 
 			if len(subDesc) > 2 {
