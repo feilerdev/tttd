@@ -35,7 +35,8 @@ func writeToCSV(l *slog.Logger, satds []TechnicalDebt, path string) error {
 
 	for _, satd := range satds {
 		desc := fmt.Sprintf("%s | file:%s, line: %d", satd.Description, satd.File, satd.Line)
-		row := []string{satd.Description, desc, "tttd", satd.Type}
+		// TODO(alexandre.liberato): add cost
+		row := []string{satd.Description, desc, satd.Author, satd.Type}
 
 		records = append(records, row)
 	}
