@@ -76,7 +76,9 @@ func detectAndParse(path string, info os.FileInfo, err error) ([]TechnicalDebt, 
 		return satds, nil
 	}
 
-	satds, err = ParseRegex(strContent, info.Name())
+	filePath := fmt.Sprintf("%s/%s", path,info.Name())
+
+	satds, err = ParseRegex(strContent, filePath)
 	if err != nil {
 		logger.Error("parsing", slog.Any("error", err))
 
