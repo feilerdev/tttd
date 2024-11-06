@@ -1,18 +1,44 @@
 # Todo to Tech Debt (tttd)
 
-The aim of this tool is to help SWE Teams in the task of better controlling it's technical debts (td) by
-automatizing the extraction of SATDs from the code to the used issues manager.
+The aim of this tool is to help SWE Teams in the task of better controlling it's technical debts by
+automatizing the extraction of Self Admited Technical Debts (SATDs) from the code to the used issues manager.
 
 ## How it works
-    - Detect: search the code for a key-value pair, full-filled with td type and description, pre-accorded tag.
-    - Transform: exports the key-value to json object.
-    - Store: creates a json file with a array of objects.
-    - Export: ?
-
-## To-do
-- Support export results to CSV
-- Support sending results to issues management tools
-- Use regex for detection
+    - Detect: search the code, line by line, for a TODO mark with description and/or reporter, type and cost 
+    - Transform: transform the SATDs to CSV format (Github/Jira)
+    - Export: exports to the default or given path
 
 ## How to run
 $ go run . '["test.go"]'
+
+## How to use
+You need to create a workflow file in your project:
+
+your-project/.github/workflows/extract-satds.yaml
+```
+name: Extract SATDs to CSV
+
+on: [push]
+
+permissions:
+  contents: write
+
+jobs:
+  extract-satds-to-csv:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Technical Debt Analysis 
+      uses: feilerdev/tttd@v0.1.4.2
+    - name: Commit results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Add technical debt analysis results" -a || echo "No changes to commit"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+```
