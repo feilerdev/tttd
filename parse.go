@@ -37,11 +37,10 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			continue
 		}
 
-		// fmt.Printf("\n\n---->> %s\n", line)
-
 		var strAuthor string
 
 		author := regexAuthor.FindAllStringSubmatch(line, -1)
+
 		// author exists
 		if len(author) > 0 {
 			subAuthor := author[0]
@@ -51,20 +50,14 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 
 		var strDesc string
 
-		// fmt.Printf("---->> description\n")
 		desc := regexDescription.FindAllStringSubmatch(line, 3)
+
 		// description exists
 		if len(desc) > 0 {
 			var subDesc []string
 
-			// fmt.Printf("---->> description[0]: %s\n", desc[0])
-			// if len(desc) > 1 {
-			// 	fmt.Printf("---->> description[1]: %s\n", desc[1])
-			// }
-
 			if len(desc) > 2 {
 				subDesc = desc[2]
-				// fmt.Printf("---->> description[2]: %s\n", desc[2])
 			} else {
 				subDesc = desc[0]
 
@@ -75,9 +68,6 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 
 			if len(subDesc) > 2 {
 				strDesc = strings.TrimSpace(subDesc[0])
-				// fmt.Printf("---->> subDesc[0]: %s\n", subDesc[0])
-				// fmt.Printf("---->> subDesc[1]: %s\n", subDesc[1])
-				// fmt.Printf("---->> subDesc[2]: %s\n", subDesc[2])
 			}
 
 			// clean
