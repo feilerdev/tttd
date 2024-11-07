@@ -8,6 +8,24 @@ automatizing the extraction of Self Admited Technical Debts (SATDs) from the cod
     - Transform: transform the SATDs to CSV format (Github/Jira)
     - Export: exports to the default or given path
 
+## Example of valid SATDs
+```
+func validsSatd() {
+	fmt.Println("Hello world!")
+
+	// TODO: simple
+	// TODO(simple): with description
+	// TODO(simple): with description > and type
+	// TODO(simple): with description > and type => and cost
+
+	// TODO: description without user > improve package division.
+	fmt.Println("Hello tttd!")
+
+	// TODO(al.lo): td-maintenence > improve package division.
+	fmt.Println("Hello tttd!")
+}
+```
+
 ## How to run
 $ go run . '["test.go"]'
 
