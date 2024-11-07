@@ -32,3 +32,12 @@ install-linters: ## Installs linters
 	@go install github.com/daixiang0/gci@latest
 	@echo "Installing golangci-lint"
 	@curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.55.2
+
+.PHONY: lint
+lint: ## Run lint
+	@echo "==> Running go vet"
+	@go vet ./...
+	@echo "==> Running staticcheck"
+	@staticcheck ./...
+	@echo "==> Running govulncheck"
+	@govulncheck ./...
