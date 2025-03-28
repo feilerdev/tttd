@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 const satdPattern = `((\/\/)|(\*))\s?TODO(\([0-9A-Za-z].*\))?:?\s?[0-9A-Za-z_\s]*\s?(->)?\s?[0-9A-Za-z]*\-?[0-9A-Za-z]*\s?(=>)?\s?\$?\$?\$?\$?\$?(\w|$)`
@@ -17,19 +16,32 @@ var (
 	regex       = regexp.MustCompile(satdPattern)
 )
 
+// extractSATDs walks through the workspace directory and extracts all SATDs from the Go files.
+// It returns a slice of TechnicalDebt and an error if any occurs during the process.
+// The function uses a recursive approach to traverse the directory structure and
+// identifies SATDs based on the defined pattern. The extracted SATDs are then parsed
+// and returned as a slice of TechnicalDebt.
 func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	satds := make([]TechnicalDebt, 0)
 
-	// TODO: detect which files have satds using .Walk (sync)
-	// put the content in a map and parse using go routines (concurrently)?
+	// TODO(alexandreliberato): detect which files have satds using .Walk with sync and
+	// put the content in a map and parse using go routines, maybe concurrently?
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
 
-		newSatds, errDetectAndParse := detectAndParse(path, info, err)
+		content, errDetectAndParse := detect(path, info, err)
 		if errDetectAndParse != nil {
 			return fmt.Errorf("detecting and parsing: %w", errDetectAndParse)
+		}
+
+		// TODO(alexandreliberato): use goroutines to parse the files concurrently
+		newSatds, err := ParseRegex(content, path, info.Name())
+		if err != nil {
+			logger.Error("parsing", slog.Any("error", err))
+
+			return fmt.Errorf("parsing: %w", err)
 		}
 
 		satds = append(satds, newSatds...)
@@ -51,39 +63,28 @@ func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	return satds, nil
 }
 
-func detectAndParse(path string, info os.FileInfo, err error) ([]TechnicalDebt, error) {
+func detect(path string, info os.FileInfo, err error) (string, error) {
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	satds := make([]TechnicalDebt, 0)
-
-	if info.IsDir() || !strings.HasSuffix(info.Name(), ".go") {
-		return satds, nil
+	if info.IsDir() {
+		return "", nil
 	}
 
 	content, err := os.ReadFile(path)
 	if err != nil {
 		logger.Error("reading file", slog.Any("error", err))
 
-		return nil, err
+		return "", err
 	}
 
 	strContent := string(content)
 
 	match := regex.MatchString(strContent)
 	if !match {
-		return satds, nil
+		return "", nil
 	}
 
-	filePath := fmt.Sprintf("%s/%s", path,info.Name())
-
-	satds, err = ParseRegex(strContent, filePath)
-	if err != nil {
-		logger.Error("parsing", slog.Any("error", err))
-
-		return nil, err
-	}
-
-	return satds, nil
+	return strContent, nil
 }

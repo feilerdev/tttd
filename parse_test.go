@@ -7,6 +7,7 @@ import (
 type TestCase struct {
 	name        string
 	fileContent string
+	filePath    string
 	fileName    string
 	want        []TechnicalDebt
 	err         error
@@ -17,7 +18,9 @@ func Test_ParseRegex(t *testing.T) {
 
 	testCases := []TestCase{
 		{
-			name: "success when content is valid: complete",
+			name:     "success when content is valid: complete",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -41,7 +44,9 @@ func Test_ParseRegex(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "success when content is valid: type",
+			name:     "success when content is valid: type",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -66,7 +71,9 @@ func Test_ParseRegex(t *testing.T) {
 		},
 
 		{
-			name: "success when no content in a comment",
+			name:     "success when no content in a comment",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -81,7 +88,9 @@ func Test_ParseRegex(t *testing.T) {
 			err:  nil,
 		},
 		{
-			name: "success when comment is empty",
+			name:     "success when comment is empty",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -96,7 +105,9 @@ func Test_ParseRegex(t *testing.T) {
 			err:  nil,
 		},
 		{
-			name: "success when content is valid: description",
+			name:     "success when content is valid: description",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -120,7 +131,9 @@ func Test_ParseRegex(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "success when content is valid: missing author",
+			name:     "success when content is valid: missing author",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -144,7 +157,9 @@ func Test_ParseRegex(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "zero values when SATD is missing",
+			name:     "zero values when SATD is missing",
+			filePath: "./tests/",
+			fileName: "test.go",
 			fileContent: `package main
 
 			import "fmt"
@@ -167,7 +182,7 @@ func Test_ParseRegex(t *testing.T) {
 			// t.Parallel()
 
 			// <RUN>: output
-			got, err := ParseRegex(tt.fileContent, tt.fileName)
+			got, err := ParseRegex(tt.fileContent, tt.filePath, tt.fileName)
 			if err != nil {
 				t.Errorf("error %v", err)
 			}

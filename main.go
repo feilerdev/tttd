@@ -36,7 +36,7 @@ func execute() {
 		outputPath = defaultFileName
 	}
 
-	// TODO: Get CSV header from environment variable
+	// TODO(alexandreliberato): Get CSV header from environment variable
 
 	// If the outputPath is not absolute, make it relative to the workspace
 	if !filepath.IsAbs(outputPath) {

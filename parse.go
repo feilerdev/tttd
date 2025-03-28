@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -21,7 +22,8 @@ var (
 	regexCost        = regexp.MustCompile(patternCost)
 )
 
-func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
+// ParseRegex parses the content of a file and extracts technical debts based on the defined regex patterns.
+func ParseRegex(content string, path string, fileName string) ([]TechnicalDebt, error) {
 	scanner := bufio.NewScanner(strings.NewReader(content))
 
 	debts := make([]TechnicalDebt, 0)
@@ -48,34 +50,35 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			strAuthor = strings.TrimSpace(subAuthor[1])
 		}
 
-		var strDesc string
+		var strDescription string
 
-		desc := regexDescription.FindAllStringSubmatch(line, 3)
+		description := regexDescription.FindAllStringSubmatch(line, 3)
 
-		// description exists
-		if len(desc) > 0 {
+		// verify if description exists and is not empty
+		if len(description) > 0 {
 			var subDesc []string
 
-			if len(desc) > 2 {
-				subDesc = desc[2]
+			if len(description) > 2 {
+				subDesc = description[2]
 			} else {
-				subDesc = desc[0]
+				subDesc = description[0]
 
-				if len(desc) == 2 {
-					subDesc = desc[1]
+				if len(description) == 2 {
+					subDesc = description[1]
 				}
 			}
 
 			if len(subDesc) > 2 {
-				strDesc = strings.TrimSpace(subDesc[0])
+				strDescription = strings.TrimSpace(subDesc[0])
 			}
 
 			// clean
-			strDesc = strings.TrimLeft(strDesc, ":")
-			strDesc = strings.TrimRight(strDesc, "-")
-			strDesc = strings.TrimSpace(strDesc)
+			strDescription = strings.TrimLeft(strDescription, ":")
+			strDescription = strings.TrimRight(strDescription, "-")
+			strDescription = strings.TrimSpace(strDescription)
 		}
 
+		// verify if type and cost exist
 		var strType string
 		tdType := regexType.FindAllStringSubmatch(line, -1)
 		if len(tdType) > 0 {
@@ -90,9 +93,12 @@ func ParseRegex(content string, file string) ([]TechnicalDebt, error) {
 			strCost = strings.TrimSpace(subCost[1])
 		}
 
+		// create the TechnicalDebt struct
+		file := fmt.Sprintf("%s/%s", path, fileName)
+
 		td := TechnicalDebt{
 			Author:      strAuthor,
-			Description: strDesc,
+			Description: strDescription,
 			Type:        strType,
 			Cost:        strCost,
 			File:        file,

@@ -8,13 +8,13 @@ build:
 	@echo "==> done!"
 
 #
-# TESTS
+# TESTING
 #
 
 .PHONY: test
 test:
 	@echo "==> testing system..."
-	# TODO: use parallel tests > td-quality => $$ 
+	# TODO(alexandreliberato): use parallel tests > td-quality => $$ 
 	@go test ./... -v
 	@echo "==> done!"
 
