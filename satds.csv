@@ -1,4 +1,10 @@
 summary,description,reporter,issue type
+simple,"simple | file:/github/workspace/README.md/README.md, line: 16",,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 17",simple,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 18",simple,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 19",simple,
+description without user,"description without user | file:/github/workspace/README.md/README.md, line: 21",,
+td-maintenence,"td-maintenence | file:/github/workspace/README.md/README.md, line: 24",al.lo,
 detect which files have satds using,"detect which files have satds using | file:/github/workspace/extract.go/extract.go, line: 27",alexandreliberato,
 use goroutines to parse the files concurrently,"use goroutines to parse the files concurrently | file:/github/workspace/extract.go/extract.go, line: 39",alexandreliberato,
 add cost,"add cost | file:/github/workspace/filesystem.go/filesystem.go, line: 38",alexandre.liberato,
@@ -16,3 +22,5 @@ with description,"with description | file:/github/workspace/tests/sample_valid_m
 description without user,"description without user | file:/github/workspace/tests/sample_valid_multiple_satds.go/sample_valid_multiple_satds.go, line: 13",,
 td-maintenence,"td-maintenence | file:/github/workspace/tests/sample_valid_multiple_satds.go/sample_valid_multiple_satds.go, line: 16",al.lo,
 improve package division,"improve package division | file:/github/workspace/tests/sample_valid_satd.go/sample_valid_satd.go, line: 8",lorem.ipsum,
+This implementation uses hardcoded output message which isn,"This implementation uses hardcoded output message which isn | file:/github/workspace/tests/sample_valid_satd.java/sample_valid_satd.java, line: 6",tes.test,
+Using alert,"Using alert | file:/github/workspace/tests/sample_valid_satd.js/sample_valid_satd.js, line: 5",tes.test,
