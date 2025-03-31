@@ -9,7 +9,7 @@ import (
 
 const (
 	patternAuthor      = `TODO\(([0-9A-Za-z\.]*)\)`
-	patternDescription = `(TODO|\)|:)(\s)?([0-9A-Za-z_\-\s]*)(\s)?`
+	patternDescription = `(TODO|\)|:)(\s)?([0-9A-Za-z\(\)'"_\-\s]*)(\s)?`
 	patternType        = `->\s?([0-9A-Za-z_\s-]*)`
 	patternCost        = `=>\s?([$]*)`
 )

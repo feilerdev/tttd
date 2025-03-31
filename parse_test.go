@@ -19,7 +19,7 @@ func Test_ParseRegex(t *testing.T) {
 	testCases := []TestCase{
 		{
 			name:     "success when content is valid: complete",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -37,7 +37,7 @@ func Test_ParseRegex(t *testing.T) {
 					Type:        "td-design",
 					Description: "T1 improve package division",
 					Cost:        "$$",
-					File:        "",
+					File:        "./tests/test.go",
 					Line:        8,
 				},
 			},
@@ -45,7 +45,7 @@ func Test_ParseRegex(t *testing.T) {
 		},
 		{
 			name:     "success when content is valid: type",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -63,7 +63,7 @@ func Test_ParseRegex(t *testing.T) {
 					Type:        "td-design",
 					Description: "T2 improve package division",
 					Cost:        "",
-					File:        "",
+					File:        "./tests/test.go",
 					Line:        8,
 				},
 			},
@@ -72,7 +72,7 @@ func Test_ParseRegex(t *testing.T) {
 
 		{
 			name:     "success when no content in a comment",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -89,7 +89,7 @@ func Test_ParseRegex(t *testing.T) {
 		},
 		{
 			name:     "success when comment is empty",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -106,7 +106,7 @@ func Test_ParseRegex(t *testing.T) {
 		},
 		{
 			name:     "success when content is valid: description",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -124,7 +124,7 @@ func Test_ParseRegex(t *testing.T) {
 					Type:        "",
 					Description: "T4 improve package division",
 					Cost:        "",
-					File:        "",
+					File:        "./tests/test.go",
 					Line:        8,
 				},
 			},
@@ -132,7 +132,7 @@ func Test_ParseRegex(t *testing.T) {
 		},
 		{
 			name:     "success when content is valid: missing author",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -150,7 +150,7 @@ func Test_ParseRegex(t *testing.T) {
 					Type:        "",
 					Description: "T5 improve package division",
 					Cost:        "",
-					File:        "",
+					File:        "./tests/test.go",
 					Line:        8,
 				},
 			},
@@ -158,7 +158,7 @@ func Test_ParseRegex(t *testing.T) {
 		},
 		{
 			name:     "zero values when SATD is missing",
-			filePath: "./tests/",
+			filePath: "./tests",
 			fileName: "test.go",
 			fileContent: `package main
 
@@ -172,6 +172,84 @@ func Test_ParseRegex(t *testing.T) {
 			}`,
 			want: nil,
 			err:  nil,
+		},
+		{
+			name:     "should succeed when parenthesis are present in description section",
+			filePath: "./tests",
+			fileName: "test.go",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO: T7 improve (a lot) package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "",
+					Cost:        "",
+					Description: "T7 improve (a lot) package division",
+					File:        "./tests/test.go",
+					Line:        8,
+					Type:        "",
+				},
+			},
+			err: nil,
+		},
+		{
+			name:     "should succeed when single quotes are present in description section",
+			filePath: "./tests",
+			fileName: "test.go",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO: T8 improve 'a lot' package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "",
+					Cost:        "",
+					Description: "T8 improve 'a lot' package division",
+					File:        "./tests/test.go",
+					Line:        8,
+					Type:        "",
+				},
+			},
+			err: nil,
+		},
+		{
+			name:     "should succeed when double quotes are present in description section",
+			filePath: "./tests",
+			fileName: "test.go",
+			fileContent: `package main
+
+			import "fmt"
+
+			func main() {
+				fmt.Println("Hello world!")
+
+				// TODO: T9 improve "a lot" package division 
+				fmt.Println("Hello tttd!")
+			}`,
+			want: []TechnicalDebt{
+				{
+					Author:      "",
+					Cost:        "",
+					Description: `T9 improve "a lot" package division`,
+					File:        "./tests/test.go",
+					Line:        8,
+					Type:        "",
+				},
+			},
+			err: nil,
 		},
 	}
 
