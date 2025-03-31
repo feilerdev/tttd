@@ -47,7 +47,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run Technical Debt Analysis 
-      uses: feilerdev/tttd@v0.1.4.2
+      uses: feilerdev/tttd@v0.1.5.1
     - name: Commit results
       run: |
         git config --local user.email "action@github.com"
