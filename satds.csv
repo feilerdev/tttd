@@ -1,8 +1,8 @@
 summary,description,reporter,issue type
 simple,"simple | file:/github/workspace/README.md/README.md, line: 16",,
-with description,"with description | file:/github/workspace/README.md/README.md, line: 17",simple,
-with description,"with description | file:/github/workspace/README.md/README.md, line: 18",simple,
-with description,"with description | file:/github/workspace/README.md/README.md, line: 19",simple,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 17",author.name,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 18",user.name,
+with description,"with description | file:/github/workspace/README.md/README.md, line: 19",github.user,
 description without user,"description without user | file:/github/workspace/README.md/README.md, line: 21",,
 td-maintenence,"td-maintenence | file:/github/workspace/README.md/README.md, line: 24",al.lo,
 detect which files have satds using,"detect which files have satds using | file:/github/workspace/extract.go/extract.go, line: 27",alexandreliberato,
