@@ -14,9 +14,9 @@ func validsSatd() {
 	fmt.Println("Hello world!")
 
 	// TODO: simple
-	// TODO(simple): with description
-	// TODO(simple): with description > type
-	// TODO(simple): with description > type => cost
+	// TODO(author.name): with description
+	// TODO(user.name): with description > type
+	// TODO(github.user): with description > type => cost
 
 	// TODO: description without user > improve package division.
 	fmt.Println("Hello tttd!")
