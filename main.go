@@ -7,8 +7,9 @@ import (
 )
 
 type config struct {
-	workspaceDir string
-	outputPath   string
+	workspacePath string
+	ignorePath    string
+	outputPath    string
 }
 
 func main() {
@@ -18,35 +19,57 @@ func main() {
 }
 
 func execute() {
-	const defaultFileName = "satds.csv"
 
-	// The workspace directory is automatically set as the working directory
-	workspaceDir, err := os.Getwd()
+	conf, err := loadConf()
 	if err != nil {
-		logger.Error("getting root directory", slog.Any("error", err))
+		logger.Error("loading conf", slog.Any("err", err))
+	}
 
+	satds, err := extractSATDs(conf.workspacePath, conf.ignorePath)
+	if err != nil {
 		panic(err)
 	}
 
-	logger.Info(workspaceDir)
+	writeToCSV(logger, satds, conf.outputPath)
+}
 
-	// Get the output path from the environment variable
-	outputPath := os.Getenv("INPUT_OUTPUT_PATH")
-	if outputPath == "" {
-		outputPath = defaultFileName
+func loadConf() (config, error) {
+	const defaultFileName = "satds.csv"
+
+	// Get paths from environment variables
+	var (
+		err  error
+		conf config
+	)
+
+	conf.workspacePath = os.Getenv("WORKSPACE_PATH")
+
+	if conf.workspacePath == "" {
+		// use current path
+		conf.workspacePath, err = os.Getwd()
+		if err != nil {
+			logger.Error("getting root directory", slog.Any("error", err))
+
+			panic(err)
+		}
+	}
+
+	conf.outputPath = os.Getenv("OUTPUT_PATH")
+	conf.ignorePath = os.Getenv("IGNORE_PATH")
+	if conf.outputPath == "" {
+		conf.outputPath = defaultFileName
 	}
 
 	// TODO(alexandreliberato): Get CSV header from environment variable
 
 	// If the outputPath is not absolute, make it relative to the workspace
-	if !filepath.IsAbs(outputPath) {
-		outputPath = filepath.Join(workspaceDir, outputPath)
+	if !filepath.IsAbs(conf.outputPath) {
+		conf.outputPath = filepath.Join(conf.workspacePath, conf.outputPath)
 	}
 
-	satds, err := extractSATDs(workspaceDir)
-	if err != nil {
-		panic(err)
+	if !filepath.IsAbs(conf.ignorePath) {
+		conf.ignorePath = filepath.Join(conf.workspacePath, conf.ignorePath)
 	}
 
-	writeToCSV(logger, satds, outputPath)
+	return conf, nil
 }

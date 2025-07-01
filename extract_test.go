@@ -9,10 +9,11 @@ func TestExtractSATDs(t *testing.T) {
 	NewLogger()
 
 	// input
-	workspace := "./tests/"
+	workspacePath := "."
+	ignorePath := "vendor"
 
 	// process & output
-	satds, err := extractSATDs(workspace)
+	satds, err := extractSATDs(workspacePath, ignorePath)
 	if err != nil {
 		t.Fail()
 	}

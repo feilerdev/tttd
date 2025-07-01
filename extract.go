@@ -21,7 +21,7 @@ var (
 // The function uses a recursive approach to traverse the directory structure and
 // identifies SATDs based on the defined pattern. The extracted SATDs are then parsed
 // and returned as a slice of TechnicalDebt.
-func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
+func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
 	satds := make([]TechnicalDebt, 0)
 
 	// TODO(alexandreliberato): detect which files have satds using .Walk with sync and
@@ -29,6 +29,12 @@ func extractSATDs(workspaceDir string) ([]TechnicalDebt, error) {
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
+		}
+
+		if info.IsDir() && info.Name() == ignorePath {
+			logger.Error("skipping directory")
+
+			return filepath.SkipDir
 		}
 
 		content, errDetectAndParse := detect(path, info, err)
