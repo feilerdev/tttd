@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -54,11 +55,8 @@ func loadConf() (config, error) {
 		}
 	}
 
-	conf.outputPath = os.Getenv("OUTPUT_PATH")
+	conf.outputPath = fmt.Sprintf("%s/%s", os.Getenv("OUTPUT_PATH"), defaultFileName)
 	conf.ignorePath = os.Getenv("IGNORE_PATH")
-	if conf.outputPath == "" {
-		conf.outputPath = defaultFileName
-	}
 
 	// TODO(alexandreliberato): Get CSV header from environment variable
 

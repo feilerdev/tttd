@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 const satdPattern = `((\/\/)|(\*))\s?TODO(\([0-9A-Za-z].*\))?:?\s?[0-9A-Za-z_\s]*\s?(->)?\s?[0-9A-Za-z]*\-?[0-9A-Za-z]*\s?(=>)?\s?\$?\$?\$?\$?\$?(\w|$)`
@@ -31,8 +32,8 @@ func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
 			return nil
 		}
 
-		if info.IsDir() && info.Name() == ignorePath {
-			logger.Error("skipping directory")
+		if ignore(path, ignorePath) {
+			logger.Error("skipping ignored directory")
 
 			return filepath.SkipDir
 		}
@@ -93,4 +94,19 @@ func detect(path string, info os.FileInfo, err error) (string, error) {
 	}
 
 	return strContent, nil
+}
+
+func ignore(p, ip string) bool {
+	ip1 := fmt.Sprintf("/%s/", ip)
+	ip2 := fmt.Sprintf(".%s/", ip)
+
+	if strings.Contains(p, ip1) {
+		return true
+	}
+
+	if strings.Contains(p, ip2) {
+		return true
+	}
+
+	return false
 }

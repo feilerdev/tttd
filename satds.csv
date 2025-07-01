@@ -5,10 +5,10 @@ with description,"with description | file:/github/workspace/README.md/README.md,
 with description,"with description | file:/github/workspace/README.md/README.md, line: 19",github.user,
 description without user,"description without user | file:/github/workspace/README.md/README.md, line: 21",,
 td-maintenence,"td-maintenence | file:/github/workspace/README.md/README.md, line: 24",al.lo,
-detect which files have satds using,"detect which files have satds using | file:/github/workspace/extract.go/extract.go, line: 27",alexandreliberato,
-use goroutines to parse the files concurrently,"use goroutines to parse the files concurrently | file:/github/workspace/extract.go/extract.go, line: 45",alexandreliberato,
+detect which files have satds using,"detect which files have satds using | file:/github/workspace/extract.go/extract.go, line: 28",alexandreliberato,
+use goroutines to parse the files concurrently,"use goroutines to parse the files concurrently | file:/github/workspace/extract.go/extract.go, line: 46",alexandreliberato,
 add cost,"add cost | file:/github/workspace/filesystem.go/filesystem.go, line: 38",alexandre.liberato,
-Get CSV header from environment variable,"Get CSV header from environment variable | file:/github/workspace/main.go/main.go, line: 63",alexandreliberato,
+Get CSV header from environment variable,"Get CSV header from environment variable | file:/github/workspace/main.go/main.go, line: 61",alexandreliberato,
 add date,"add date | file:/github/workspace/parse.go/parse.go, line: 18",alexandre.liberato,
 T1 improve package division,"T1 improve package division | file:/github/workspace/parse_test.go/parse_test.go, line: 31",dev.lorem,td-design
 T2 improve package division,"T2 improve package division | file:/github/workspace/parse_test.go/parse_test.go, line: 57",dev.lorem,td-design
