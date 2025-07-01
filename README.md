@@ -32,6 +32,7 @@ $ go run . '["test.go"]'
 ## How to use
 You need to create a workflow file in your project:
 
+### Example 01
 your-project/.github/workflows/extract-satds.yaml
 ```
 name: Extract SATDs to CSV
@@ -48,6 +49,37 @@ jobs:
     - uses: actions/checkout@v3
     - name: Run Technical Debt Analysis 
       uses: feilerdev/tttd@v0.1.5.1
+    - name: Commit results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Add technical debt analysis results" -a || echo "No changes to commit"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+```
+
+### Example 02
+```
+name: Extract SATDs to CSV
+
+on: [push]
+
+permissions:
+  contents: write
+
+jobs:
+  extract-satds-to-csv:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Technical Debt Analysis 
+      uses: feilerdev/tttd@9adafb93a54b89c3bf5847843137836846c60309
+      with:
+        ignore_path: 'vendor'
     - name: Commit results
       run: |
         git config --local user.email "action@github.com"
