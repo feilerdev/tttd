@@ -22,7 +22,7 @@ var (
 // The function uses a recursive approach to traverse the directory structure and
 // identifies SATDs based on the defined pattern. The extracted SATDs are then parsed
 // and returned as a slice of TechnicalDebt.
-func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
+func extractSATDs(workspaceDir string, ignorePaths []string) ([]TechnicalDebt, error) {
 	satds := make([]TechnicalDebt, 0)
 
 	// TODO(alexandreliberato): detect which files have satds using .Walk with sync and
@@ -32,7 +32,7 @@ func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
 			return err
 		}
 
-		if ignore(path, ignorePath) {
+		if ignore(path, ignorePaths) {
 			if info.IsDir() {
 				logger.Debug("skipping ignored directory", slog.String("path", path))
 
@@ -106,18 +106,25 @@ func detect(path string, info os.FileInfo, err error) (string, error) {
 	return strContent, nil
 }
 
-// ignore reports whether path p is, or lives under, the ignored path ip.
+// ignore reports whether path p is, or lives under, any of the ignored paths.
 // It matches on full path segments so it works for relative top-level paths
 // (e.g. "vendor/x.go"), nested paths ("pkg/vendor/x.go") and absolute paths.
-func ignore(p, ip string) bool {
-	if ip == "" {
-		return false
+func ignore(p string, ignorePaths []string) bool {
+	p = filepath.ToSlash(p)
+
+	for _, ip := range ignorePaths {
+		if ip == "" {
+			continue
+		}
+
+		ip = filepath.ToSlash(ip)
+
+		if p == ip ||
+			strings.HasPrefix(p, ip+"/") ||
+			strings.Contains(p, "/"+ip+"/") {
+			return true
+		}
 	}
 
-	p = filepath.ToSlash(p)
-	ip = filepath.ToSlash(ip)
-
-	return p == ip ||
-		strings.HasPrefix(p, ip+"/") ||
-		strings.Contains(p, "/"+ip+"/")
+	return false
 }

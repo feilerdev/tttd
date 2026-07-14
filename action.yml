@@ -9,7 +9,7 @@ inputs:
     required: false
     default: '.'
   ignore_path:
-    description: 'Path not scanned'
+    description: 'Path(s) not scanned. Accepts a comma-separated list, e.g. "vendor,.github"'
     required: false
     default: 'vendor'
   output_path:

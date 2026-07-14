@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM golang:1.22.6-bookworm
+FROM golang:1.26-bookworm
 
 WORKDIR /go/src/action
 COPY . .

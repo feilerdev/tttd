@@ -6,11 +6,12 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type config struct {
 	workspacePath string
-	ignorePath    string
+	ignorePaths   []string
 	outputPath    string
 }
 
@@ -27,7 +28,7 @@ func execute() {
 		logger.Error("loading conf", slog.Any("err", err))
 	}
 
-	satds, err := extractSATDs(conf.workspacePath, conf.ignorePath)
+	satds, err := extractSATDs(conf.workspacePath, conf.ignorePaths)
 	if err != nil {
 		// No SATDs is a valid outcome: emit an empty (headers-only) report
 		// instead of failing the workflow.
@@ -70,10 +71,10 @@ func loadConf() (config, error) {
 
 	conf.outputPath = fmt.Sprintf("%s/%s", os.Getenv("OUTPUT_PATH"), defaultFileName)
 
-	// ignorePath is matched as a path segment against the (relative) paths
-	// produced by filepath.Walk, so keep it as given (e.g. "vendor") rather
-	// than absolutizing it.
-	conf.ignorePath = os.Getenv("IGNORE_PATH")
+	// IGNORE_PATH accepts one or more comma-separated paths (e.g. "vendor,.github").
+	// Each is matched as a path segment against the (relative) paths produced by
+	// filepath.Walk, so keep them as given rather than absolutizing them.
+	conf.ignorePaths = parseIgnorePaths(os.Getenv("IGNORE_PATH"))
 
 	// TODO(alexandreliberato): Get CSV header from environment variable
 
@@ -83,4 +84,20 @@ func loadConf() (config, error) {
 	}
 
 	return conf, nil
+}
+
+// parseIgnorePaths splits a comma-separated IGNORE_PATH value into individual
+// paths, trimming surrounding whitespace and dropping empty entries.
+func parseIgnorePaths(raw string) []string {
+	parts := strings.Split(raw, ",")
+
+	paths := make([]string, 0, len(parts))
+
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			paths = append(paths, p)
+		}
+	}
+
+	return paths
 }
