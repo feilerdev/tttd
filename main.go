@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -28,10 +29,22 @@ func execute() {
 
 	satds, err := extractSATDs(conf.workspacePath, conf.ignorePath)
 	if err != nil {
-		panic(err)
+		// No SATDs is a valid outcome: emit an empty (headers-only) report
+		// instead of failing the workflow.
+		if !errors.Is(err, ErrNotFound) {
+			panic(err)
+		}
+
+		logger.Info("no SATDs found; writing empty report")
+
+		satds = nil
 	}
 
-	writeToCSV(logger, satds, conf.outputPath)
+	if err := writeToCSV(logger, satds, conf.outputPath); err != nil {
+		logger.Error("writing CSV", slog.Any("error", err))
+
+		os.Exit(1)
+	}
 }
 
 func loadConf() (config, error) {
@@ -56,6 +69,10 @@ func loadConf() (config, error) {
 	}
 
 	conf.outputPath = fmt.Sprintf("%s/%s", os.Getenv("OUTPUT_PATH"), defaultFileName)
+
+	// ignorePath is matched as a path segment against the (relative) paths
+	// produced by filepath.Walk, so keep it as given (e.g. "vendor") rather
+	// than absolutizing it.
 	conf.ignorePath = os.Getenv("IGNORE_PATH")
 
 	// TODO(alexandreliberato): Get CSV header from environment variable
@@ -63,10 +80,6 @@ func loadConf() (config, error) {
 	// If the outputPath is not absolute, make it relative to the workspace
 	if !filepath.IsAbs(conf.outputPath) {
 		conf.outputPath = filepath.Join(conf.workspacePath, conf.outputPath)
-	}
-
-	if !filepath.IsAbs(conf.ignorePath) {
-		conf.ignorePath = filepath.Join(conf.workspacePath, conf.ignorePath)
 	}
 
 	return conf, nil

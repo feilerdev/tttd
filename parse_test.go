@@ -167,7 +167,7 @@ func Test_ParseRegex(t *testing.T) {
 			func main() {
 				fmt.Println("Hello world!")
 
-				// TODO: T6 improve package division 
+				// T6 improve package division
 				fmt.Println("Hello tttd!")
 			}`,
 			want: nil,
@@ -254,8 +254,6 @@ func Test_ParseRegex(t *testing.T) {
 	}
 
 	for _, tt := range testCases {
-		tt := tt
-
 		t.Run(tt.name, func(t *testing.T) {
 			// t.Parallel()
 
@@ -265,34 +263,36 @@ func Test_ParseRegex(t *testing.T) {
 				t.Errorf("error %v", err)
 			}
 
-			if len(got) != 0 {
-				// <VALIDATE>: verify results
-				for _, g := range got {
-					for _, w := range tt.want {
-						if g.Author != w.Author {
-							t.Errorf("author: got %q, wanted %q", g.Author, w.Author)
-						}
+			// <VALIDATE>: the number of results must match expectations
+			if len(got) != len(tt.want) {
+				t.Fatalf("count: got %d SATDs, wanted %d (%+v)", len(got), len(tt.want), got)
+			}
 
-						if g.Type != w.Type {
-							t.Errorf("type: got %q, wanted %q", g.Type, w.Type)
-						}
+			for i, w := range tt.want {
+				g := got[i]
 
-						if g.Description != w.Description {
-							t.Errorf("description: got %q, wanted %q", g.Description, w.Description)
-						}
+				if g.Author != w.Author {
+					t.Errorf("author: got %q, wanted %q", g.Author, w.Author)
+				}
 
-						if g.Cost != w.Cost {
-							t.Errorf("cost: got %q, wanted %q", g.Cost, w.Cost)
-						}
+				if g.Type != w.Type {
+					t.Errorf("type: got %q, wanted %q", g.Type, w.Type)
+				}
 
-						if g.File != w.File {
-							t.Errorf("file: got %q, wanted %q", g.File, w.File)
-						}
+				if g.Description != w.Description {
+					t.Errorf("description: got %q, wanted %q", g.Description, w.Description)
+				}
 
-						if g.Line != w.Line {
-							t.Errorf("line: got %q, wanted %q", g.Line, w.Line)
-						}
-					}
+				if g.Cost != w.Cost {
+					t.Errorf("cost: got %q, wanted %q", g.Cost, w.Cost)
+				}
+
+				if g.File != w.File {
+					t.Errorf("file: got %q, wanted %q", g.File, w.File)
+				}
+
+				if g.Line != w.Line {
+					t.Errorf("line: got %d, wanted %d", g.Line, w.Line)
 				}
 			}
 		})

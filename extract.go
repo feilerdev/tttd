@@ -28,14 +28,22 @@ func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
 	// TODO(alexandreliberato): detect which files have satds using .Walk with sync and
 	// put the content in a map and parse using go routines, maybe concurrently?
 	err := filepath.Walk(workspaceDir, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			return nil
+		if err != nil {
+			return err
 		}
 
 		if ignore(path, ignorePath) {
-			logger.Error("skipping ignored directory")
+			if info.IsDir() {
+				logger.Debug("skipping ignored directory", slog.String("path", path))
 
-			return filepath.SkipDir
+				return filepath.SkipDir
+			}
+
+			return nil
+		}
+
+		if info.IsDir() {
+			return nil
 		}
 
 		content, errDetectAndParse := detect(path, info, err)
@@ -43,8 +51,10 @@ func extractSATDs(workspaceDir, ignorePath string) ([]TechnicalDebt, error) {
 			return fmt.Errorf("detecting and parsing: %w", errDetectAndParse)
 		}
 
+		// ParseRegex joins the directory and file name, so pass the file's
+		// directory (not the full path) to avoid duplicating the file name.
 		// TODO(alexandreliberato): use goroutines to parse the files concurrently
-		newSatds, err := ParseRegex(content, path, info.Name())
+		newSatds, err := ParseRegex(content, filepath.Dir(path), info.Name())
 		if err != nil {
 			logger.Error("parsing", slog.Any("error", err))
 
@@ -96,17 +106,18 @@ func detect(path string, info os.FileInfo, err error) (string, error) {
 	return strContent, nil
 }
 
+// ignore reports whether path p is, or lives under, the ignored path ip.
+// It matches on full path segments so it works for relative top-level paths
+// (e.g. "vendor/x.go"), nested paths ("pkg/vendor/x.go") and absolute paths.
 func ignore(p, ip string) bool {
-	ip1 := fmt.Sprintf("/%s/", ip)
-	ip2 := fmt.Sprintf(".%s/", ip)
-
-	if strings.Contains(p, ip1) {
-		return true
+	if ip == "" {
+		return false
 	}
 
-	if strings.Contains(p, ip2) {
-		return true
-	}
+	p = filepath.ToSlash(p)
+	ip = filepath.ToSlash(ip)
 
-	return false
+	return p == ip ||
+		strings.HasPrefix(p, ip+"/") ||
+		strings.Contains(p, "/"+ip+"/")
 }

@@ -1,4 +1,4 @@
-package main
+package fixtures
 
 import "fmt"
 

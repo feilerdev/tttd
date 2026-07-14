@@ -7,5 +7,4 @@ type TechnicalDebt struct {
 	Cost        string
 	File        string
 	Line        int
-	sad         string
 }
